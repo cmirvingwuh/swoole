@@ -292,6 +292,7 @@ class SiteController extends Controller
         $authorization = $authStringPrefix . '/host/' . $signature;
         /**** 生成认证参数End ****/
 
+        echo 1111;die;
         try {
             $client = new ([
                 'transport' => 'yii\httpclient\CurlTransport',
