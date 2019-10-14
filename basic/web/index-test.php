@@ -1,16 +1,44 @@
 <?php
+echo "process-start-time:".date("Ymd H:i:s");
+$urls = [
+    'http://baidu1.com',
+    'http://baidu2.com',
+    'http://baidu3.com',
+    'http://baidu4.com',
+    'http://baidu5.com',
+    'http://baidu6.com',
+    'http://baidu7.com',
+];
+$workers = [];
+//原始方案
+//foreach ($urls as $url){
+//    $content[] = file_get_contents($url);
+//}
 
-// NOTE: Make sure this file is not accessible when deployed to production
-if (!in_array(@$_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1'])) {
-    die('You are not allowed to access this file.');
+
+for($i = 0 ;$i < 7; $i++){
+    //子进程
+    $process = new swoole_process(function(swoole_process $worker) use($i,$urls){
+        //curl
+        $content = curlData($urls[$i]);
+//        echo $content.PHP_EOL; 两种方法都行
+        $worker->write($content.PHP_EOL);
+    },true);
+    $pid = $process->start();
+    $workers[$pid] = $process;
 }
 
-defined('YII_DEBUG') or define('YII_DEBUG', true);
-defined('YII_ENV') or define('YII_ENV', 'test');
-
-require __DIR__ . '/../vendor/autoload.php';
-require __DIR__ . '/../vendor/yiisoft/yii2/Yii.php';
-
-$config = require __DIR__ . '/../config/test.php';
-
-(new yii\web\Application($config))->run();
+foreach ($workers as $process){
+    echo $process->read();
+}
+/**
+ * 模拟url请求
+ * @param $url
+ * @return string
+ */
+function curlData($url)
+{
+    sleep(1);
+    return $url."success".PHP_EOL;
+}
+echo "process-end-time:".date("Ymd H:i:s");
