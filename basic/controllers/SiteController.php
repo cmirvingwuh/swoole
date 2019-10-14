@@ -305,8 +305,8 @@ class SiteController extends Controller
                     'x-bce-date' => $timestamp
                 ])->setOptions([
                     CURLOPT_PROXY => self::PROXY_SERVER,
-                    CURLOPT_CONNECTTIMEOUT => $ctime,
-                    CURLOPT_TIMEOUT => $timeout,
+//                    CURLOPT_CONNECTTIMEOUT => $ctime,
+//                    CURLOPT_TIMEOUT => $timeout,
                     CURLOPT_FOLLOWLOCATION => true
                 ])->send();
 
