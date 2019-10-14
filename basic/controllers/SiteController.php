@@ -64,6 +64,8 @@ class SiteController extends Controller
             ]
         ];
 
+
+        var_dump($params);die;
         $json = self::requestAPI($bceid, $aduser, 'VideoFeedService/prepareUploadVideoFeed/', $params);
         return $json;
     }
