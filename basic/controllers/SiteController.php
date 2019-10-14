@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use http\Client;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -9,7 +10,6 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
-
 class SiteController extends Controller
 {
     const BASE_URL = 'http://sem.baidubce.com/v1/feed/cloud/';
@@ -28,12 +28,19 @@ class SiteController extends Controller
     const PROXY_SERVER      = '180.76.244.131:44446';             //百度智能云代理服务器
     public function actionIndex()
     {
-//        echo 111;die;
+//      $rst = file_put_contents('/tmp/test.mp4' , file_get_contents('https://nbres-dev.oss-cn-shanghai.aliyuncs.com/Res/1dltgsrla1o221ta816rp4pf1ll24.mp4'));
+//      var_export($rst);die;
 
-//        $rst = file_get_contents('https://nbres-dev.oss-cn-shanghai.aliyuncs.com/Res/1dltgsrla1o221ta816rp4pf1ll24.mp4');
-      $rst = file_put_contents('/tmp/test.mp4' , file_get_contents('https://nbres-dev.oss-cn-shanghai.aliyuncs.com/Res/1dltgsrla1o221ta816rp4pf1ll24.mp4'));
+        // 视频预上传
+//        /data/wwwroot/wuh.suv3.changmeng.com/components/tf/BaiduAPI.php:127:string '946ebee8efb8483ba333875ba552023a' (length=32)
+//        /data/wwwroot/wuh.suv3.changmeng.com/components/tf/BaiduAPI.php:127:string '原生-SY24-B19KA04241' (length=22)
+//        /data/wwwroot/wuh.suv3.changmeng.com/components/tf/BaiduAPI.php:127:string '投放-RO-H5-075-吴浩-148-沙静-双屏+字幕跳' (length=51)
+//        /data/wwwroot/wuh.suv3.changmeng.com/components/tf/BaiduAPI.php:127:string '/tmp/tfres/b4a9810a2111fef1d7f792c4aa2d321a.mp4' (length=47)
+//        /data/wwwroot/wuh.suv3.changmeng.com/components/tf/BaiduAPI.php:127:int 99463552
 
-      var_export($rst);die;
+        $makeUpload = self::videoMakeUpload('946ebee8efb8483ba333875ba552023a' , '原生-SY24-B19KA04241' , 'test' , '/tmp/test.mp4' , 99463552);
+
+        var_dump($makeUpload);
     }
 
 
@@ -65,10 +72,10 @@ class SiteController extends Controller
 
         $json = self::requestAPI($bceid, $aduser, 'VideoFeedService/prepareUploadVideoFeed/', $params);
         if($json['header']['status'] === 0) {
-            Yii::info(__METHOD__.__LINE__.json_encode($json), 'tf_api');
+            Yii::info(__METHOD__.__LINE__.json_encode($json));
             return $json['body']['data'][0];
         } else {
-            Yii::warning(__METHOD__.__LINE__.json_encode($json), 'tf_api');
+            Yii::warning(__METHOD__.__LINE__.json_encode($json));
             return false;
         }
     }
