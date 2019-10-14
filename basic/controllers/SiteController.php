@@ -40,7 +40,7 @@ class SiteController extends Controller
     public function actionIndex()
     {
 
-        echo phpinfo();die;
+//        echo phpinfo();die;
 //      $rst = file_put_contents('/tmp/test.mp4' , file_get_contents('https://nbres-dev.oss-cn-shanghai.aliyuncs.com/Res/1dltgsrla1o221ta816rp4pf1ll24.mp4'));
 //      var_export($rst);die;
 
