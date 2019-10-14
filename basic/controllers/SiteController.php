@@ -1,15 +1,8 @@
 <?php
 
 namespace app\controllers;
-
-use http\Client;
 use Yii;
-use yii\filters\AccessControl;
 use yii\web\Controller;
-use yii\web\Response;
-use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\ContactForm;
 class SiteController extends Controller
 {
     const BASE_URL = 'http://sem.baidubce.com/v1/feed/cloud/';
@@ -299,7 +292,7 @@ class SiteController extends Controller
         /**** 生成认证参数End ****/
 
         try {
-            $client = new Client([
+            $client = new ([
                 'transport' => 'yii\httpclient\CurlTransport',
                 'requestConfig' => ['format' => $format],
                 'responseConfig' => ['format' => Client::FORMAT_JSON]
