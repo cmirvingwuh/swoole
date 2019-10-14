@@ -247,7 +247,7 @@ class SiteController extends Controller
      * 向百度API服务器发起请求
      * 百度API必须在百度云中发起请求，因此所有接口前方都有代理服务器
      */
-    public static function requestAPI($bceid, $aduser, $api, $params = [], $method = 'POST', $format = Client::FORMAT_JSON, $ctime = 5, $timeout = 10) {
+    public static function requestAPI($bceid, $aduser, $api, $params = [], $method = 'POST', $format = Client::FORMAT_JSON, $ctime = 20, $timeout = 50) {
         if(!array_key_exists($bceid, self::MARKETING_USERS)) return ['code' => 999, 'bceid not config'];
 
         $url = self::BASE_URL . $api;
