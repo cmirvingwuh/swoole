@@ -65,8 +65,10 @@ class SiteController extends Controller
         ];
 
 
-        var_dump($params);die;
+//        var_dump($params);die;
         $json = self::requestAPI($bceid, $aduser, 'VideoFeedService/prepareUploadVideoFeed/', $params);
+
+        var_dump($json);die;
         return $json;
     }
 
@@ -168,6 +170,8 @@ class SiteController extends Controller
         if(!array_key_exists($bceid, self::MARKETING_USERS)) return ['code' => 999, 'bceid not config'];
 
         $url = self::BASE_URL . $api;
+
+        echo $url;die;
         $method = strtoupper($method);
 
         $timezone = date_default_timezone_get();
