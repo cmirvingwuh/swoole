@@ -28,6 +28,7 @@ class SiteController extends Controller
     const PROXY_SERVER      = '180.76.244.131:44446';             //百度智能云代理服务器
     public function actionIndex()
     {
+        ini_set ('memory_limit', '128M');
 //        echo 111;die;
       $rst = file_put_contents('/tpm/test.mp4' , file_get_contents('https://nbres-dev.oss-cn-shanghai.aliyuncs.com/Res/1dltgsrla1o221ta816rp4pf1ll24.mp4'));
 
