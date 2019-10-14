@@ -1,4 +1,9 @@
 <?php
+
+//进程? 就是运行的程序的一个实例
+
+
+
 echo "process-start-time:".date("Ymd H:i:s");
 $urls = [
     'http://baidu1.com',
@@ -18,7 +23,8 @@ $workers = [];
 
 for($i = 0 ;$i < 7; $i++){
     //子进程
-    $process = new swoole_process(function(swoole_process $worker) use($i,$urls){
+
+    $process = new Swoole\Process(function(Swoole\Process $worker) use($i,$urls){
         //curl
         $content = curlData($urls[$i]);
 //        echo $content.PHP_EOL; 两种方法都行
