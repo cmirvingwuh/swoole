@@ -8,6 +8,15 @@ class SiteController extends Controller
 {
     const BASE_URL = 'http://sem.baidubce.com/v1/feed/cloud/';
     const MARKETING_USERS = [   //开发者配置
+        'c0e00ed647214808ac8b465b6e7efcbf'  => [
+            'bceid'         => 'c0e00ed647214808ac8b465b6e7efcbf',  //百度云ID
+            'accesskey'     => 'da630cc07c114b12a1cd2457d7d5e911',  //百度云访问KEY
+            'secretkey'     => '5357ba3f46c44f9ea204abfb1876fa63',  //百度云访问密钥
+            'company'       => '广州游城网络科技有限公司',
+            'username'      => '游城原生02',                         //管家登录账户名
+            'password'      => 'iwg380YZR',                         //管家登录密码
+            'aduser'        => '原生-l8游城A18KA2054'                //管家下属的任一子账户，管家级账号操作自身时，必须要有个被操作账户，蛋疼
+        ],
         '946ebee8efb8483ba333875ba552023a'  => [
             'bceid'         => '946ebee8efb8483ba333875ba552023a',  //百度云ID
             'accesskey'     => '2a2371a619aa44ebaece5c918a49435e',  //百度云访问KEY
@@ -16,9 +25,17 @@ class SiteController extends Controller
             'username'      => '恺英SY原生管家',                         //管家登录账户名
             'password'      => 'Ab1234',                         //管家登录密码
             'aduser'        => '原生-SY01-B19KA02801'                //管家下属的任一子账户，管家级账号操作自身时，必须要有个被操作账户，蛋疼
-        ]
+        ],
+        '4049ef6b680b479893f5df6bf42d4bad'  => [
+            'bceid'         => '4049ef6b680b479893f5df6bf42d4bad',  //百度云ID
+            'accesskey'     => '9bcd5542495a44e59114056ef8734e0f',  //百度云访问KEY
+            'secretkey'     => '2ee84814692d404ea584952692aa93e6',  //百度云访问密钥
+            'company'       => '上海畅梦移动网络科技有限公司',
+            'username'      => '畅梦12345',                         //管家登录账户名
+            'password'      => 'Ab1234',                         //管家登录密码
+            'aduser'        => '原生-畅梦7-B18KA0816'                //管家下属的任一子账户，管家级账号操作自身时，必须要有个被操作账户，蛋疼
+        ],
     ];
-
     const PROXY_SERVER      = '180.76.244.131:44446';             //百度智能云代理服务器
     public function actionIndex()
     {
@@ -34,9 +51,8 @@ class SiteController extends Controller
 
         $makeUpload = self::videoMakeUpload('946ebee8efb8483ba333875ba552023a' , '原生-SY24-B19KA04241' , 'test' , '/tmp/test.mp4' , 99463552);
 
-        var_dump($makeUpload);
+        var_dump($makeUpload);die;
     }
-
 
     /**
      * 视频预上传
@@ -64,12 +80,14 @@ class SiteController extends Controller
             ]
         ];
 
-
-//        var_dump($params);die;
         $json = self::requestAPI($bceid, $aduser, 'VideoFeedService/prepareUploadVideoFeed/', $params);
-
-        var_dump($json);die;
-        return $json;
+        if($json['header']['status'] === 0) {
+            Yii::info(__METHOD__.__LINE__.json_encode($json));
+            return $json['body']['data'][0];
+        } else {
+            Yii::warning(__METHOD__.__LINE__.json_encode($json));
+            return false;
+        }
     }
 
     /**
@@ -163,15 +181,13 @@ class SiteController extends Controller
     }
 
     /*
-     * 向百度API服务器发起请求
-     * 百度API必须在百度云中发起请求，因此所有接口前方都有代理服务器
-     */
+ * 向百度API服务器发起请求
+ * 百度API必须在百度云中发起请求，因此所有接口前方都有代理服务器
+ */
     public static function requestAPI($bceid, $aduser, $api, $params = [], $method = 'POST', $format = Client::FORMAT_JSON, $ctime = 5, $timeout = 10) {
         if(!array_key_exists($bceid, self::MARKETING_USERS)) return ['code' => 999, 'bceid not config'];
 
         $url = self::BASE_URL . $api;
-
-        echo $url;die;
         $method = strtoupper($method);
 
         $timezone = date_default_timezone_get();
@@ -242,4 +258,6 @@ class SiteController extends Controller
             return ['code' => 998, 'httpClient Request Exception'];
         }
     }
+
+
 }
