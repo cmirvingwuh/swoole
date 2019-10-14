@@ -65,13 +65,7 @@ class SiteController extends Controller
         ];
 
         $json = self::requestAPI($bceid, $aduser, 'VideoFeedService/prepareUploadVideoFeed/', $params);
-        if($json['header']['status'] === 0) {
-            Yii::info(__METHOD__.__LINE__.json_encode($json));
-            return $json['body']['data'][0];
-        } else {
-            Yii::warning(__METHOD__.__LINE__.json_encode($json));
-            return false;
-        }
+        return $json;
     }
 
     /**
@@ -165,89 +159,10 @@ class SiteController extends Controller
     }
 
     /*
- * 向百度API服务器发起请求
- * 百度API必须在百度云中发起请求，因此所有接口前方都有代理服务器
- */
-    public static function requestVideo($bceid, $aduser, $api, $params = [], $method = 'POST', $format = Client::FORMAT_JSON, $ctime = 5, $timeout = 10) {
-        if(!array_key_exists($bceid, self::MARKETING_USERS)) return ['code' => 999, 'bceid not config'];
-
-        $url = $api;
-        $method = strtoupper($method);
-
-        $timezone = date_default_timezone_get();
-        date_default_timezone_set('UTC');
-        $timestamp = date('Y-m-d\TH:i:s\Z');
-        date_default_timezone_set($timezone);
-
-        $params = [
-            'body'  => empty($params) ? (object)[] : $params,
-            'header' => [
-                'opUsername'    => self::MARKETING_USERS[$bceid]['username'],
-                'opPassword'    => self::MARKETING_USERS[$bceid]['password'],
-                'tgSubname'     => $aduser,
-                'bceUser'       => $bceid
-            ]
-        ];
-
-        /**** 生成认证参数Start ****/
-        $authStringPrefix = implode('/', [
-            'bce-auth-v1',
-            self::MARKETING_USERS[$bceid]['accesskey'],
-            $timestamp,
-            1800
-        ]);
-        $SigningKey = hash_hmac('sha256', $authStringPrefix, self::MARKETING_USERS[$bceid]['secretkey']);
-
-        $urlInfo = parse_url($url);
-        $queryArr = isset($urlInfo['query']) ? parse_str($urlInfo['query']) : [];
-        if(array_key_exists('authorization', $queryArr)) unset($queryArr['authorization']);
-        ksort($queryArr);
-        $CanonicalRequest = [
-            $method,
-            str_replace('%2F', '/', urlencode($urlInfo['path'])),
-            http_build_query($queryArr),
-            'host:' . urlencode($urlInfo['host'])
-        ];
-
-        $signature = hash_hmac('sha256', implode("\n", $CanonicalRequest), $SigningKey);
-        $authorization = $authStringPrefix . '/host/' . $signature;
-        /**** 生成认证参数End ****/
-
-        try {
-            $client = new Client([
-                'transport' => 'yii\httpclient\CurlTransport',
-                'requestConfig' => ['format' => $format],
-                'responseConfig' => ['format' => Client::FORMAT_JSON]
-            ]);
-
-            $response = $client->createRequest()->setMethod($method)->setUrl($url)->setData($params)
-                ->setHeaders([
-                    'Authorization' => $authorization,
-                    'x-bce-date' => $timestamp
-                ])->setOptions([
-                    CURLOPT_PROXY => self::PROXY_SERVER,
-                    CURLOPT_CONNECTTIMEOUT => $ctime,
-                    CURLOPT_TIMEOUT => $timeout,
-                    CURLOPT_FOLLOWLOCATION => true
-                ])->send();
-
-            if($response->isOK) {
-                return $response->data;
-            } else {
-                Yii::warning($response->toString(), 'tf_api');
-                return ['header' => ['status' => $response->statusCode, 'desc' => $response->toString()]];
-            }
-        } catch (\yii\base\InvalidConfigException $e) {
-            Yii::warning($e->getMessage(), 'tf_api');
-            return ['code' => 998, 'httpClient Request Exception'];
-        }
-    }
-
-    /*
      * 向百度API服务器发起请求
      * 百度API必须在百度云中发起请求，因此所有接口前方都有代理服务器
      */
-    public static function requestAPI($bceid, $aduser, $api, $params = [], $method = 'POST', $format = Client::FORMAT_JSON, $ctime = 20, $timeout = 50) {
+    public static function requestAPI($bceid, $aduser, $api, $params = [], $method = 'POST', $format = Client::FORMAT_JSON, $ctime = 5, $timeout = 10) {
         if(!array_key_exists($bceid, self::MARKETING_USERS)) return ['code' => 999, 'bceid not config'];
 
         $url = self::BASE_URL . $api;
@@ -305,8 +220,8 @@ class SiteController extends Controller
                     'x-bce-date' => $timestamp
                 ])->setOptions([
                     CURLOPT_PROXY => self::PROXY_SERVER,
-//                    CURLOPT_CONNECTTIMEOUT => $ctime,
-//                    CURLOPT_TIMEOUT => $timeout,
+                    CURLOPT_CONNECTTIMEOUT => $ctime,
+                    CURLOPT_TIMEOUT => $timeout,
                     CURLOPT_FOLLOWLOCATION => true
                 ])->send();
 
