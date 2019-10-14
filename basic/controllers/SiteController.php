@@ -55,7 +55,7 @@ class SiteController extends Controller
 
         for($i = 0 ;$i < 7; $i++){
             //子进程
-            $process = new Swoole\Process(function(Swoole\Process $worker) use($i,$urls){
+            $process = new \Swoole\Process(function(\Swoole\Process $worker) use($i,$urls){
                 //curl
                 $content = $this->curlData($urls[$i]);
 //        echo $content.PHP_EOL; 两种方法都行
