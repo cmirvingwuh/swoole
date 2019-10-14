@@ -41,9 +41,46 @@ class SiteController extends Controller
 
     public function actionTest()
     {
-        echo posix_getpid(); // 获取当前进程的 pid
-        swoole_set_process_name('swoole process master'); // 修改所在进程的进程名
-        sleep(100); // 模拟一个持续运行 100s 的程序, 这样就可以在进程中查看到它, 而不是运行完了就结束
+        echo "process-start-time:".date("Ymd H:i:s");
+        $urls = [
+            'http://baidu1.com',
+            'http://baidu2.com',
+            'http://baidu3.com',
+            'http://baidu4.com',
+            'http://baidu5.com',
+            'http://baidu6.com',
+            'http://baidu7.com',
+        ];
+        $workers = [];
+        
+        for($i = 0 ;$i < 7; $i++){
+            //子进程
+            $process = new swoole_process(function(swoole_process $worker) use($i,$urls){
+                //curl
+                $content = $this->curlData($urls[$i]);
+//        echo $content.PHP_EOL; 两种方法都行
+                $worker->write($content.PHP_EOL);
+            },true);
+            $pid = $process->start();
+            $workers[$pid] = $process;
+        }
+
+        foreach ($workers as $process){
+            echo $process->read();
+        }
+
+        echo "process-end-time:".date("Ymd H:i:s");
+    }
+
+    /**
+     * 模拟url请求
+     * @param $url
+     * @return string
+     */
+    public function curlData($url)
+    {
+        sleep(1);
+        return $url."success".PHP_EOL;
     }
 
     public function actionIndex()
