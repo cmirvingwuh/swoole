@@ -24,14 +24,14 @@ $workers = [];
 for($i = 0 ;$i < 7; $i++){
     //子进程
 
-//    $process = new Swoole\Process(function(Swoole\Process $worker) use($i,$urls){
+    $process = new Swoole\Process(function(Swoole\Process $worker) use($i,$urls){
         //curl
         $content = curlData($urls[$i]);
-        echo $content.PHP_EOL;
-//        $worker->write($content.PHP_EOL);
-//    },true);
-//    $pid = $process->start();
-//    $workers[$pid] = $process;
+//        echo $content.PHP_EOL;
+        $worker->write($content.PHP_EOL);
+    },true);
+    $pid = $process->start();
+    $workers[$pid] = $process;
 }
 
 foreach ($workers as $process){
