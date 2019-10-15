@@ -67,7 +67,7 @@ class SiteController extends Controller
                 $content = $this->curlData($urls[$i]);
 //        echo $content.PHP_EOL; 两种方法都行
                 $worker->write($content.PHP_EOL); //写入管道中
-            },true);
+            },false);
             $pid = $process->start();  //创建成功返回子进程的PID，创建失败返回false。可使用swoole_errno和swoole_strerror得到错误码和错误信息。
             $workers[$pid] = $process;
         }
