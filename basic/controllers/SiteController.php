@@ -77,6 +77,7 @@ class SiteController extends Controller
 
             echo $process->read(); // 从管道中读取
         }
+        \Swoole\Process::wait();  //子进程结束必须要执行wait进行回收，否则子进程会变成僵尸进程
 
         echo "process-end-time:".date("Ymd H:i:s");
     }
