@@ -42,19 +42,45 @@ class SiteController extends Controller
     public function actionTest()
     {
 
-        $this->serv = new \Swoole\Server("0.0.0.0", 9502);
-        $this->serv->set([
-            'worker_num'      => 3,
-            'task_worker_num' => 3,
+        //httpServer->swolle_Server->http协议->(request,response)
+        /**
+         * params list $host,$port,$mode,$sock_type
+         */
+        $http = new \Swoole\Http\Server("127.0.0.1",8811);
+
+        $http->set([
+            'enable_static_handler' => true, //
+            'document_root' => '/admin/admin/index' //设置静态资源默认存放路径
         ]);
-        $this->serv->on('Start', function ($serv) {
-            echo "SWOOLE:".SWOOLE_VERSION . " 服务已启动".PHP_EOL;
-            echo "SWOOLE_CPU_NUM:".swoole_cpu_num().PHP_EOL;
+        /**
+         * $request 请求
+         * $response 响应
+         */
+        $http->on("request",function($request,$response){
+            //$request->get 获取get请求数据
+            //$request->post 获取post请求数据
+            var_dump($request->get, $request->post);
+            //设置响应头信息
+            $response->header("Content-Type", "text/html; charset=utf-8");
+            $response->end("<h1>Httpserver</h1>");
         });
-        $this->serv->on('Receive', function ($serv, $fd, $from_id, $data) { });
-        $this->serv->on('Task', function ($serv, $task) { });
-        $this->serv->on('Finish', function ($serv, $task_id, $data) {});
-        $this->serv->start();
+
+//启动服务
+        $http->start();
+
+//        $this->serv = new \Swoole\Server("0.0.0.0", 9502);
+//        $this->serv->set([
+//            'worker_num'      => 3,
+//            'task_worker_num' => 3,
+//        ]);
+//        $this->serv->on('Start', function ($serv) {
+//            echo "SWOOLE:".SWOOLE_VERSION . " 服务已启动".PHP_EOL;
+//            echo "SWOOLE_CPU_NUM:".swoole_cpu_num().PHP_EOL;
+//        });
+//        $this->serv->on('Receive', function ($serv, $fd, $from_id, $data) { });
+//        $this->serv->on('Task', function ($serv, $task) { });
+//        $this->serv->on('Finish', function ($serv, $task_id, $data) {});
+//        $this->serv->start();
 
         die;
 
