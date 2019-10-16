@@ -17,4 +17,12 @@ require __DIR__ . '/../vendor/yiisoft/yii2/Yii.php';
 
 $config = require __DIR__ . '/../config/web.php';
 
-(new yii\web\Application($config))->run();
+
+$http = new Swoole\Http\Server("127.0.0.1", 9501);
+$http->on('request', function ($request, $response) use ($config) {
+
+    (new yii\web\Application($config))->run();
+//    $response->end("<h1>Hello Swoole. #".rand(1000, 9999)."</h1>");
+});
+$http->start();
+
