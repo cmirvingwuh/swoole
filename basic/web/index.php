@@ -6,7 +6,7 @@ function getIP() {
         $ip = trim($ips[0]);
     }
 
-    return empty($ip) ? $_SERVER['REMOTE_ADDR'] : $ip;
+//    return empty($ip) ? $_SERVER['REMOTE_ADDR'] : $ip;
 }
 
 if(!defined('YII_DEBUG') && getIP() == "210.22.94.146") define('YII_DEBUG', true);
