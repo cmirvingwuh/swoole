@@ -199,11 +199,8 @@ class SiteController extends Controller
         \Swoole\Process::wait();  //子进程结束必须要执行wait进行回收，否则子进程会变成僵尸进程
 
         echo "process-end-time:".date("Ymd H:i:s");
-
-<<<<<<< HEAD
-=======
         die;
->>>>>>> dad4e8f4f0b64ccf7f6af15d1e0b89c45ff5dbf7
+
         echo phpinfo();die;
 //      $rst = file_put_contents('/tmp/test.mp4' , file_get_contents('https://nbres-dev.oss-cn-shanghai.aliyuncs.com/Res/1dltgsrla1o221ta816rp4pf1ll24.mp4'));
 //      var_export($rst);die;
